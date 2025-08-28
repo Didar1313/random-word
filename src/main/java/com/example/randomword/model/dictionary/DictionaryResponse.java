@@ -1,24 +1,14 @@
 package com.example.randomword.model.dictionary;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Setter
+@Getter
 public class DictionaryResponse {
     private String word;
     private List<Meaning> meanings;
 
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-    public List<Meaning> getMeanings() {
-        return meanings;
-    }
-
-    public void setMeanings(List<Meaning> meanings) {
-        this.meanings = meanings;
-    }
 }
