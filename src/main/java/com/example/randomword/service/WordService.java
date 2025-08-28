@@ -1,5 +1,6 @@
 package com.example.randomword.service;
 
+import com.example.randomword.model.word.WordResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,4 +15,19 @@ public class WordService {
         this.dictionaryClient = builder.baseUrl("https://api.dictionaryapi.dev/api/v2/entries/en").build();
     }
 
+    public WordResponse getWordOfTheDay() {
+        // Fetch random word
+        String[] words = randomWordClient.get()
+                .uri("/word")
+                .retrieve()
+                .bodyToMono(String[].class)
+                .block();
+
+        if (words == null || words.length == 0) {
+            throw new RuntimeException("Failed to fetch random word");
+        }
+
+        String word = words[0];
+        return new WordResponse(word, null);
+    }
 }
