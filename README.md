@@ -25,7 +25,6 @@ A **Spring Boot REST application** that provides a "Random Word" feature. This p
 * REST endpoint: `/wordOfTheDay`.
 * Swagger UI documentation for easy API exploration.
 * Professional exception handling with meaningful error responses.
-* Unit tests for core services using **JUnit 5** and **Mockito**.
 
 ---
 
