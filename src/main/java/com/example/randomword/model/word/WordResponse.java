@@ -1,4 +1,4 @@
-package com.example.randomword.model;
+package com.example.randomword.model.word;
 
 import java.util.List;
 

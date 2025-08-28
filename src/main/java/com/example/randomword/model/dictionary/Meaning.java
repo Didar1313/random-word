@@ -1,4 +1,6 @@
-package com.example.randomword.model;
+package com.example.randomword.model.dictionary;
+
+import com.example.randomword.model.word.DefinitionWithPOS;
 
 import java.util.List;
 
