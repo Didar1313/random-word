@@ -1,5 +1,7 @@
 package com.example.randomword.service;
 
+import com.example.randomword.exception.custom.DictionaryFetchException;
+import com.example.randomword.exception.custom.WordFetchException;
 import com.example.randomword.model.dictionary.DictionaryResponse;
 import com.example.randomword.model.word.DefinitionWithPOS;
 import com.example.randomword.model.word.WordResponse;
@@ -22,36 +24,43 @@ public class WordService {
 
     @Cacheable("wordOfTheDay")
     public WordResponse getWordOfTheDay() {
-        // Fetch random word
-        String[] words = randomWordClient.get()
-                .uri("/word")
-                .retrieve()
-                .bodyToMono(String[].class)
-                .block();
+        String[] words;
+        try {
+            words = randomWordClient.get()
+                    .uri("/word")
+                    .retrieve()
+                    .bodyToMono(String[].class)
+                    .block();
+        } catch (Exception e) {
+            throw new WordFetchException("Failed to fetch random word: " + e.getMessage());
+        }
 
         if (words == null || words.length == 0) {
-            throw new RuntimeException("Failed to fetch random word");
+            throw new WordFetchException("Random word API returned no words");
         }
 
         String word = words[0];
 
-        // Fetch definitions from dictionary API
-        DictionaryResponse[] dictionaryResponses = dictionaryClient.get()
-                .uri("/{word}", word)
-                .retrieve()
-                .bodyToMono(DictionaryResponse[].class)
-                .onErrorReturn(new DictionaryResponse[0])
-                .block();
-
-        if (dictionaryResponses == null || dictionaryResponses.length == 0) {
-            return new WordResponse(word, List.of());
+        DictionaryResponse[] dictionaryResponses;
+        try {
+            dictionaryResponses = dictionaryClient.get()
+                    .uri("/{word}", word)
+                    .retrieve()
+                    .bodyToMono(DictionaryResponse[].class)
+                    .onErrorReturn(new DictionaryResponse[0])
+                    .block();
+        } catch (Exception e) {
+            throw new DictionaryFetchException("Failed to fetch definitions for word: " + word);
         }
-        // Extract definitions
-        List<DefinitionWithPOS> definitions = dictionaryResponses[0].getMeanings().stream()
+
+        List<DefinitionWithPOS> definitions = (dictionaryResponses != null && dictionaryResponses.length > 0)
+                ? dictionaryResponses[0].getMeanings().stream()
                 .flatMap(meaning -> meaning.getDefinitions().stream()
                         .map(def -> new DefinitionWithPOS(def.getDefinition(), meaning.getPartOfSpeech())))
-                .toList();
+                .toList()
+                : List.of();
 
         return new WordResponse(word, definitions);
     }
+
 }
