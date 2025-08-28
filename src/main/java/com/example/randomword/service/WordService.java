@@ -3,6 +3,7 @@ package com.example.randomword.service;
 import com.example.randomword.model.dictionary.DictionaryResponse;
 import com.example.randomword.model.word.DefinitionWithPOS;
 import com.example.randomword.model.word.WordResponse;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,6 +20,7 @@ public class WordService {
         this.dictionaryClient = builder.baseUrl("https://api.dictionaryapi.dev/api/v2/entries/en").build();
     }
 
+    @Cacheable("wordOfTheDay")
     public WordResponse getWordOfTheDay() {
         // Fetch random word
         String[] words = randomWordClient.get()
