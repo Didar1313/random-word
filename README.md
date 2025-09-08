@@ -42,7 +42,7 @@ A **Spring Boot REST application** that provides a "Random Word" feature. This p
 
 * Java 17
 * Spring Boot 3
-* Spring WebFlux (for reactive API calls)
+* Spring restTemplate (for reactive API calls)
 * Spring Cache + Caffeine
 * Swagger
 * Maven
